@@ -1,13 +1,13 @@
 package org.wit.placemark.console.main
 
+import ` org`.wit.placemark.console.models.PlacemarkMemStore
 import ` org`.wit.placemark.console.models.PlacemarkModel
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 //manage multiple 'Placemark' objects
-var placemarks = ArrayList<PlacemarkModel>()
-
+val placemarks = PlacemarkMemStore()
 
 fun main(args: Array<String>) {
     logger.info { "Launching Placemark Console App" }
@@ -62,7 +62,7 @@ fun addPlacemark(){
     aPlacemark.description = readLine()!!
 
     if (aPlacemark.title.isNotEmpty() && aPlacemark.description.isNotEmpty()) {
-        placemarks.add(aPlacemark.copy())
+        placemarks.create(aPlacemark.copy())
         logger.info("Placemark Added : [ $aPlacemark ]")
     }
     else
@@ -75,16 +75,25 @@ fun updatePlacemark() {
     listPlacemarks()
     var searchId = getId()
     val aPlacemark = search(searchId)
+    var tempTitle : String?
+    var tempDescription : String?
 
     if(aPlacemark != null) {
         print("Enter a new Title for [ " + aPlacemark.title + " ] : ")
-        aPlacemark.title = readLine()!!
+        tempTitle = readLine()!!
         print("Enter a new Description for [ " + aPlacemark.description + " ] : ")
-        aPlacemark.description = readLine()!!
-        println(
-            "You updated [ " + aPlacemark.title + " ] for title " +
-                    "and [ " + aPlacemark.description + " ] for description"
-        )
+        tempDescription = readLine()!!
+
+        if (!tempTitle.isNullOrEmpty() && !tempDescription.isNullOrEmpty()) {
+            aPlacemark.title = tempTitle
+            aPlacemark.description = tempDescription
+            println(
+                "You updated [ " + aPlacemark.title + " ] for title " +
+                        "and [ " + aPlacemark.description + " ] for description")
+            logger.info("Placemark Updated : [ $aPlacemark ]")
+        }
+        else
+            logger.info("Placemark Not Updated")
     }
     else
         println("Placemark Not Updated...")
@@ -93,7 +102,8 @@ fun updatePlacemark() {
 fun listPlacemarks() {
     println("List All Placemarks")
     println()
-    placemarks.forEach { logger.info("${it}") }
+    placemarks.logAll()
+    logger.info("[ $placemarks# ]")
     println()
 }
 
@@ -122,13 +132,13 @@ fun getId() : Long {
 }
 
 fun search(id: Long) : PlacemarkModel? {
-    var foundPlacemark: PlacemarkModel? = placemarks.find { p -> p.id == id }
+    var foundPlacemark: PlacemarkModel? = placemarks.findOne(id)
     return foundPlacemark
 }
 
 
 fun dummyData() {
-    placemarks.add(PlacemarkModel(1, "New York New York", "So Good They Named It Twice"))
-    placemarks.add(PlacemarkModel(2, "Ring of Kerry", "Some place in the Kingdom"))
-    placemarks.add(PlacemarkModel(3, "Waterford City", "You get great Blaas Here!!"))
+    placemarks.create(PlacemarkModel(1, "New York New York", "So Good They Named It Twice"))
+    placemarks.create(PlacemarkModel(2, "Ring of Kerry", "Some place in the Kingdom"))
+    placemarks.create(PlacemarkModel(3, "Waterford City", "You get great Blaas Here!!"))
 }
