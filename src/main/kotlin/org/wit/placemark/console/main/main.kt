@@ -1,22 +1,24 @@
 package org.wit.placemark.console.main
 
-import ` org`.wit.placemark.console.models.PlacemarkMemStore
-import ` org`.wit.placemark.console.models.PlacemarkModel
+import org.wit.placemark.console.models.PlacemarkMemStore
+import org.wit.placemark.console.models.PlacemarkModel
+import org.wit.placemark.console.views.PlacemarkView
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 //manage multiple 'Placemark' objects
 val placemarks = PlacemarkMemStore()
+val placemarkView = PlacemarkView()
 
 fun main(args: Array<String>) {
     logger.info { "Launching Placemark Console App" }
-    println("Placemark Kotlin App Version 1.0")
+    println("Placemark Kotlin App Version 3.0")
 
     var input: Int
 
     do {
-        input = menu()
+        input = placemarkView.menu()
         when(input) {
             1 -> addPlacemark()
             2 -> updatePlacemark()
@@ -31,72 +33,30 @@ fun main(args: Array<String>) {
     logger.info { "Shutting Down Placemark Console App" }
 }
 
-fun menu() : Int {
-
-    var option : Int
-    var input: String?
-
-    println("MAIN MENU")
-    println(" 1. Add Placemark")
-    println(" 2. Update Placemark")
-    println(" 3. List All Placemarks")
-    println(" 4. Search Placemarks")
-    println("-1. Exit")
-    println()
-    print("Enter an integer : ")
-    input = readLine()!!
-    option = if (input.toIntOrNull() != null && !input.isEmpty())
-        input.toInt()
-    else
-        -9
-    return option
-}
-
 fun addPlacemark(){
     var aPlacemark = PlacemarkModel()
-    println("Add Placemark")
-    println()
-    print("Enter a Title: ")
-    aPlacemark.title = readLine()!!
-    print("Enter a Description: ")
-    aPlacemark.description = readLine()!!
 
-    if (aPlacemark.title.isNotEmpty() && aPlacemark.description.isNotEmpty()) {
-        placemarks.create(aPlacemark.copy())
-        logger.info("Placemark Added : [ $aPlacemark ]")
-    }
+    if (placemarkView.addPlacemarkData(aPlacemark))
+        placemarks.create(aPlacemark)
     else
         logger.info("Placemark Not Added")
 }
 
 fun updatePlacemark() {
-    println("Update Placemark")
-    println()
-    listPlacemarks()
-    var searchId = getId()
+
+    placemarkView.listPlacemarks(placemarks)
+    var searchId = placemarkView.getId()
     val aPlacemark = search(searchId)
-    var tempTitle : String?
-    var tempDescription : String?
 
-    if(aPlacemark != null) {
-        print("Enter a new Title for [ " + aPlacemark.title + " ] : ")
-        tempTitle = readLine()!!
-        print("Enter a new Description for [ " + aPlacemark.description + " ] : ")
-        tempDescription = readLine()!!
-
-        if (!tempTitle.isNullOrEmpty() && !tempDescription.isNullOrEmpty()) {
-            aPlacemark.title = tempTitle
-            aPlacemark.description = tempDescription
-            println(
-                "You updated [ " + aPlacemark.title + " ] for title " +
-                        "and [ " + aPlacemark.description + " ] for description")
-            logger.info("Placemark Updated : [ $aPlacemark ]")
-        }
-        else
-            logger.info("Placemark Not Updated")
-    }
-    else
-        println("Placemark Not Updated...")
+    if (aPlacemark != null) {
+        if (placemarkView.updatePlacemarkData(aPlacemark)) {
+            placemarks.update(aPlacemark)
+            placemarkView.showPlacemark(aPlacemark)
+            logger.info { "Placemark Updated : [ $aPlacemark ]" }
+        } else
+            logger.info("Placemark not updated")
+    } else
+        logger.info("Placemark not updated")
 }
 
 fun listPlacemarks() {
@@ -108,28 +68,10 @@ fun listPlacemarks() {
 }
 
 fun searchPlacemark() {
-    var searchId = getId()
-    // create Placemark object here and assign,
-    val aPlacemark = search(searchId)
-    // based on 'searchId' value passed to 'search()'
-    if(aPlacemark != null)
-        println("Placemark Details [ $aPlacemark ]")
-    else
-        println("Placemark Not Found...")
+    val aPlacemark = search(placemarkView.getId())!!
+    placemarkView.showPlacemark(aPlacemark)
 }
 
-fun getId() : Long {
-    var strId : String? // String to hold user input
-    var searchId : Long // Long to hold converted Id
-
-    print("Enter id to Search/Update : ")
-    strId = readLine()!!
-    searchId = if (strId.toLongOrNull() != null && !strId.isEmpty())
-        strId.toLong()
-    else
-        -9
-    return searchId
-}
 
 fun search(id: Long) : PlacemarkModel? {
     var foundPlacemark: PlacemarkModel? = placemarks.findOne(id)

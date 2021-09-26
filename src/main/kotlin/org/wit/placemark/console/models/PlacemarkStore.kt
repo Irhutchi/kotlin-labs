@@ -1,4 +1,4 @@
-package ` org`.wit.placemark.console.models
+package org.wit.placemark.console.models
 
 interface PlacemarkStore {
     fun findAll(): List<PlacemarkModel>

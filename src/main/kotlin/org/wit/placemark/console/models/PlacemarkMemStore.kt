@@ -1,6 +1,8 @@
-package ` org`.wit.placemark.console.models
+package org.wit.placemark.console.models
 
 import mu.KotlinLogging
+import org.wit.placemark.console.models.PlacemarkModel
+import org.wit.placemark.console.models.PlacemarkStore
 
 private val logger = KotlinLogging.logger {}
 var lastId = 0L
