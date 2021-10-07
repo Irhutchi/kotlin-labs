@@ -15,7 +15,7 @@ class PlacemarkController {
 
     init {
         logger.info { "Launching Placemark Console App" }
-        println("Placemark Kotlin App Version 3.0")
+        println("Placemark Kotlin App Version 4.0")
     }
 
     fun start() {
@@ -28,6 +28,7 @@ class PlacemarkController {
                 2 -> update()
                 3 -> list()
                 4 -> search()
+                5 -> delete()
                 -99 -> dummyData()
                 -1 -> println("Exiting App")
                 else -> println("Invalid Option")
@@ -69,6 +70,20 @@ class PlacemarkController {
         }
         else
             println("Placemark Not Updated...")
+    }
+
+    fun delete() {
+        placemarkView.listPlacemarks(placemarks)
+        var searchId = placemarkView.getId()
+        val aPlacemark = search(searchId)
+
+        if(aPlacemark != null) {
+            placemarks.delete(aPlacemark)
+            println("Placemark Deleted...")
+            placemarkView.listPlacemarks(placemarks)
+        }
+        else
+            println("Placemark Not Deleted...")
     }
 
     fun search() {

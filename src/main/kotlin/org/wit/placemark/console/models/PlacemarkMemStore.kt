@@ -1,8 +1,7 @@
 package org.wit.placemark.console.models
 
 import mu.KotlinLogging
-import org.wit.placemark.console.models.PlacemarkModel
-import org.wit.placemark.console.models.PlacemarkStore
+
 
 private val logger = KotlinLogging.logger {}
 var lastId = 0L
@@ -36,6 +35,12 @@ class PlacemarkMemStore : PlacemarkStore {
             foundPlacemark.title = placemark.title
             foundPlacemark.description = placemark.description
         }
+    }
+
+    override fun delete(placemark: PlacemarkModel) {
+        placemark.id = getId()
+        placemarks.remove(placemark)
+        logAll()
     }
 
     internal fun logAll() {

@@ -52,6 +52,11 @@ class PlacemarkJSONStore : PlacemarkStore {
         serialize()
     }
 
+    override fun delete(placemark: PlacemarkModel) {
+        placemarks.remove(placemark)
+        serialize()
+    }
+
     internal fun logAll() {
         placemarks.forEach { logger.info("${it}") }
     }
