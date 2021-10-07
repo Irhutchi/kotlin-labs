@@ -16,6 +16,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'org.slf4j:slf4j-simple:1.6.1'
     implementation 'io.github.microutils:kotlin-logging:1.12.5'
+    implementation "com.google.code.gson:gson:2.8.5"
 }
 
 test {

@@ -1,8 +1,6 @@
 package org.wit.placemark.console.views
 
-import org.wit.placemark.console.main.placemarkView
-import org.wit.placemark.console.main.placemarks
-import org.wit.placemark.console.models.PlacemarkMemStore
+import org.wit.placemark.console.models.PlacemarkJSONStore
 import org.wit.placemark.console.models.PlacemarkModel
 
 class PlacemarkView {
@@ -28,7 +26,7 @@ class PlacemarkView {
         return option
     }
 
-    fun listPlacemarks(placemarks : PlacemarkMemStore) {
+    fun listPlacemarks(placemarks: PlacemarkJSONStore) {
         println("List All Placemarks")
         println()
         placemarks.logAll()
